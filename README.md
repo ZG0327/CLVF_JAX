@@ -9,6 +9,8 @@ It is motivated by the papers:
 > **Zheng Gong, Muhan Zhao, Thomas Bewley, and Sylvia Herbert**  
 > *Constructing Control Lyapunov-Value Functions using Hamilton-Jacobi Reachability Analysis*  
 > IEEE Control Systems Letters, 2022.
+>
+>  **Zheng Gong, and Sylvia Herbert** 
 > *Robust control lyapunov-value functions for nonlinear disturbed systems*
 > arXiv preprint arXiv:2403.03455
 
