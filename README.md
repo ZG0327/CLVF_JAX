@@ -1,4 +1,4 @@
-# hj_reachability: Hamilton-Jacobi reachability analysis in [JAX]
+# Control Lyapunov-Value Functions: a Hamilton-Jacobi reachability based CLF construction in [JAX]
 This package implements numerical solvers for Hamilton-Jacobi (HJ) Partial Differential Equations (PDEs) which, in the context of optimal control, may be used to represent the continuous-time formulation of dynamic programming. Specifically, the focus of this package is on reachability analysis for zero-sum differential games modeled as Hamilton-Jacobi-Isaacs (HJI) PDEs, wherein an optimal controller and (optional) disturbance interact, and the set of reachable states at any time is represented as the zero sublevel set of a value function realized as the viscosity solution of the corresponding PDE.
 
 This package is inspired by a number of related projects, including:
