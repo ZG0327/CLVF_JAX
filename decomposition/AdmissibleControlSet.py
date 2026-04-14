@@ -3,7 +3,7 @@ import jax
 import jax.numpy as jnp
 
 
-class CLVFConstraintBuilder:
+class AdmissibleControlSet:
     """
     Build CLVF linear inequalities of the form
 
@@ -144,27 +144,25 @@ class CLVFConstraintBuilder:
         return gradV, V
 
     def value_and_grad_batch(self, X, t=0.0):
-        """
-        Batch interpolation for many states X with shape (N, n).
-
-        Returns
-        -------
-        gradV : jnp.ndarray, shape (N, n)
-        V : jnp.ndarray, shape (N,)
-        """
         X = jnp.asarray(X)
-        if X.ndim != 2:
-            raise ValueError("X must have shape (N, n).")
-
         value_grid = self._get_grid_at_time(self.value_function, t)
         grad_grid = self._get_grid_at_time(self.grad_value_function, t)
 
-        V = self.grid.interpolate(value_grid, X)
-        gradV = self.grid.interpolate(grad_grid, X)
+        if X.ndim == 1:
+            V = self.grid.interpolate(value_grid, X)
+            gradV = self.grid.interpolate(grad_grid, X)
+            return gradV, V
+
+        interp_value = jax.vmap(lambda x: self.grid.interpolate(value_grid, x))
+        interp_grad = jax.vmap(lambda x: self.grid.interpolate(grad_grid, x))
+
+        V = interp_value(X)
+        gradV = interp_grad(X)
 
         if jnp.any(jnp.isnan(gradV)) or jnp.any(jnp.isnan(V)):
             raise ValueError(
-                "Some states are outside the non-periodic grid domain; interpolation returned NaN."
+                "NaNs encountered during interpolation. "
+                "Some states may lie outside the grid bounds."
             )
 
         return gradV, V
@@ -436,7 +434,7 @@ def compute_ab_state(
     time_interp="nearest",
     robust_disturbance=False,
 ):
-    builder = CLVFConstraintBuilder(
+    builder = AdmissibleControlSet(
         dynamics=dynamics,
         grid=grid,
         value_function=value_function,
@@ -464,7 +462,7 @@ def compute_ab_grid(
     time_interp="nearest",
     robust_disturbance=False,
 ):
-    builder = CLVFConstraintBuilder(
+    builder = AdmissibleControlSet(
         dynamics=dynamics,
         grid=grid,
         value_function=value_function,
@@ -480,5 +478,5 @@ def compute_ab_grid(
 
 if __name__ == "__main__":
     print(
-        "This file defines CLVFConstraintBuilder, compute_ab_state(...), and compute_ab_grid(...)."
+        "This file defines AdmissibleControlSet, compute_ab_state(...), and compute_ab_grid(...)."
     )

@@ -82,8 +82,38 @@ def step_until_converged(
             )
 
             dt = jnp.maximum(jnp.abs(new_t - t), jnp.finfo(new_v.dtype).eps)
-            diff = jnp.max(jnp.abs(new_v - v)) / dt
+
+            divergence_threshold = getattr(solver_settings, "divergence_threshold", None)
+
+            if divergence_threshold is None:
+                delta_v = jnp.max(jnp.abs(new_v - v))
+                diff = delta_v / dt
+                active_mask = jnp.ones_like(v, dtype=bool)
+            else:
+        # 和你的 divergence freezing 口径保持一致：
+        # 只把 value > divergence_threshold 的点视为 diverged
+                active_mask = jnp.logical_and(
+                        v <= divergence_threshold,
+                        new_v <= divergence_threshold,
+                        )
+
+                delta_field = jnp.where(active_mask, jnp.abs(new_v - v), 0.0)
+                has_active = jnp.any(active_mask)
+
+        # 只在未 diverge 的 grid 上取 max change
+                delta_v = jnp.where(has_active, jnp.max(delta_field), jnp.inf)
+                diff = delta_v / dt
+
             new_done = diff < convergence_threshold
+
+            
+            # diff = jnp.max(jnp.abs(new_v - v)) / dt
+            # delta_v = jnp.max(jnp.abs(new_v - v))
+            # new_done = diff < convergence_threshold
+            
+            
+            jax.debug.print("t={:.4f}, max|ΔV|={:.6e}, max|ΔV|/dt={:.6e}",
+                            new_t, delta_v, diff)
 
             if bar is not False:
                 bar.update_to(jnp.abs(new_t - bar.reference_time))
