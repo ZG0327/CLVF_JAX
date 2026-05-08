@@ -13,7 +13,7 @@ from hj_reachability.dynamics import ControlAndDisturbanceAffineDynamics, Dynami
 from hj_reachability.grid import Grid
 from hj_reachability.qp_controller import solve_two_stage_qp
 from hj_reachability.solver import SolverSettings, solve, step
-from hj_reachability.zg_solver import ZGSolverSettings, step_until_converged
+from hj_reachability.zg_solver import ZGSolverSettings, step_until_converged, step_until_converged_with_time, step_until_converged_save_every
 from hj_reachability.zg_time_integration import (
     euler_step_div_freeze,
     third_order_tvd_rk_div_freeze,
