@@ -42,7 +42,7 @@ class Controller:
         self.upwind_scheme = upwind_scheme
         self.time_interp = time_interp
         self.mode = mode
-        
+
         # Detect static vs time-varying value function
         if self.value_function.ndim == self.grid.ndim:
             self.is_time_varying = False

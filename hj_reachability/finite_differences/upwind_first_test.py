@@ -116,8 +116,8 @@ class UpwindFirstTest(absltest.TestCase):
         np.testing.assert_allclose(upwind_first._substencil_coefficients(3), np.array([[1, 6, 3], [3, 6, 1]]) / 10)
 
     def test_smoothness_indicator_quad_form(self):
-        diff_operator = lambda k: np.eye(k - 1, k, 1) - np.eye(k - 1, k, 0)
-        square_outer = lambda v: v[..., np.newaxis] * v[..., np.newaxis, :]
+        def diff_operator(k): return np.eye(k - 1, k, 1) - np.eye(k - 1, k, 0)
+        def square_outer(v): return v[..., np.newaxis] * v[..., np.newaxis, :]
 
         # k = 1
         np.testing.assert_allclose(

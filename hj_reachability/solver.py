@@ -14,10 +14,12 @@ from typing import Callable, Text
 
 # Hamiltonian postprocessors.
 identity = lambda *x: x[-1]  # Returns the last argument so that this may also be used as a value postprocessor.
-backwards_reachable_tube = lambda x: jnp.minimum(x, 0)
+def backwards_reachable_tube(x): return jnp.minimum(x, 0)
 
 # Value postprocessors.
-static_obstacle = lambda obstacle: (lambda t, v: jnp.maximum(v, obstacle))
+
+
+def static_obstacle(obstacle): return (lambda t, v: jnp.maximum(v, obstacle))
 
 
 @struct.dataclass
@@ -43,6 +45,7 @@ class SolverSettings:
         pytree_node=False,
     )
     CFL_number: float = 0.75
+
     @classmethod
     def with_accuracy(cls, accuracy: Text, **kwargs) -> "SolverSettings":
         if accuracy == "low":
@@ -79,7 +82,7 @@ def step(solver_settings, dynamics, grid, time, values, target_time, progress_ba
 def solve(solver_settings, dynamics, grid, times, initial_values, progress_bar=True):
     with (_try_get_progress_bar(times[0], times[-1])
           if progress_bar is True else contextlib.nullcontext(progress_bar)) as bar:
-        make_carry_and_output_slice = lambda t, v: ((t, v), v)
+        def make_carry_and_output_slice(t, v): return ((t, v), v)
         return jnp.concatenate([
             initial_values[np.newaxis],
             jax.lax.scan(
@@ -100,7 +103,6 @@ def _try_get_progress_bar(reference_time, target_time):
                        unit="sim_s",
                        bar_format="{l_bar}{bar}| {n:7.4f}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]",
                        ascii=True)
-
 
 
 class TqdmWrapper:

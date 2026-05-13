@@ -24,7 +24,7 @@ class UtilsTest(absltest.TestCase):
             np.max(a, (0, 1)).swapaxes(0, 1))
 
     def test_unit_vector(self):
-        unsafe_unit_vector = lambda x: x / jnp.linalg.norm(x, axis=-1, keepdims=True)
+        def unsafe_unit_vector(x): return x / jnp.linalg.norm(x, axis=-1, keepdims=True)
         for d in range(1, 4):
             np.testing.assert_array_equal(utils.unit_vector(np.zeros(d)), np.zeros(d))
             self.assertTrue(np.all(np.isfinite(jax.jacobian(utils.unit_vector)(np.zeros(d)))))

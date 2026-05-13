@@ -30,7 +30,7 @@ class DubinsCar(dynamics.ControlAndDisturbanceAffineDynamics):
         if disturbance_space is None:
             disturbance_space = sets.Box(
                 jnp.array([-d1_max, -d2_max, -d3_max]),
-                jnp.array([ d1_max,  d2_max,  d3_max])
+                jnp.array([d1_max, d2_max, d3_max])
             )
 
         super().__init__(control_mode, disturbance_mode, control_space, disturbance_space)

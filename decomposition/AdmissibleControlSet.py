@@ -304,8 +304,8 @@ class AdmissibleControlSet:
         X = jnp.asarray(x_arr)
         gradV, V = self.value_and_grad_batch(X, t=t)
 
-        f_fun = lambda x_i: self.dynamics.open_loop_dynamics(x_i, t)
-        g_fun = lambda x_i: self.dynamics.control_jacobian(x_i, t)
+        def f_fun(x_i): return self.dynamics.open_loop_dynamics(x_i, t)
+        def g_fun(x_i): return self.dynamics.control_jacobian(x_i, t)
 
         f = jax.vmap(f_fun)(X)
         g = jax.vmap(g_fun)(X)
@@ -345,7 +345,7 @@ class AdmissibleControlSet:
                     "robust_disturbance=True requires d_range to be provided."
                 )
 
-            h_fun = lambda x_i: self.dynamics.disturbance_jacobian(x_i, t)
+            def h_fun(x_i): return self.dynamics.disturbance_jacobian(x_i, t)
             h = jax.vmap(h_fun)(X)
             LhV = self._batched_lg(gradV, h)
 
@@ -446,7 +446,6 @@ def compute_ab_state(
         time_interp=time_interp,
     )
     return builder.compute_ab_state(x=x, t=t, robust_disturbance=robust_disturbance)
-
 
 
 def compute_ab_grid(

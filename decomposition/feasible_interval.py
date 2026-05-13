@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def feasible_interval_grid_1d(A_grid, b_grid, u_range, tol=1e-9):
     """
     Compute feasible interval [u_low, u_high] at every grid point for 1D control.
@@ -74,7 +75,6 @@ def feasible_interval_grid_1d(A_grid, b_grid, u_range, tol=1e-9):
     feasible_mask &= (u_low_grid <= u_high_grid + tol)
 
     return u_low_grid, u_high_grid, feasible_mask
-
 
 
 def feasible_interval_state_1d(A, b, u_range, tol=1e-9):
